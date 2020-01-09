@@ -1,7 +1,7 @@
 Summary: ACPI Event Daemon
 Name: acpid
 Version: 1.0.10
-Release: 2.1%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 Source: http://prdownloads.sourceforge.net/acpid/acpid-%{version}.tar.gz
@@ -9,6 +9,7 @@ Source1: acpid.init
 Source2: acpid.video.conf
 Source3: acpid.power.conf
 Source4: acpid.power.sh
+Source5: acpid.sysconfig
 Patch1: acpid-1.0.8-makefile.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExclusiveArch: ia64 x86_64 %{ix86}
@@ -41,6 +42,8 @@ chmod 755 $RPM_BUILD_ROOT%{_sysconfdir}/acpi/events
 install -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/acpi/events/video.conf
 install -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/acpi/events/power.conf
 install -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/acpi/actions/power.sh
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+install -m 644 %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/acpid
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/acpid
@@ -59,6 +62,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/acpi/events/video.conf
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/acpi/events/power.conf
 %config(noreplace) %attr(0755,root,root) %{_sysconfdir}/acpi/actions/power.sh
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/sysconfig/acpid
 %{_bindir}/acpi_listen
 %{_sbindir}/acpid
 %attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/acpid
@@ -81,6 +85,10 @@ if [ "$1" -ge "1" ]; then
 fi
 
 %changelog
+* Wed Oct  9 2013 Jaroslav Škarvada <jskarvad@redhat.com> - 1.0.10-3
+- Added acpid service configuration file
+  Resolves: rhbz#1015033
+
 * Mon Nov 30 2009 Dennis Gregorovic <dgregor@redhat.com> - 1.0.10-2.1
 - Rebuilt for RHEL 6
 
